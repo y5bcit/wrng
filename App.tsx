@@ -29,6 +29,7 @@ const RootStack = createStackNavigator(
     },
   },
   {
+    initialRouteName: "Main",
     headerMode: "none",
     mode: "modal",
   },
