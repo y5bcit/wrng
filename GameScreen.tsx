@@ -43,8 +43,9 @@ export class GameScreen extends React.Component<{ navigation: any }, {}> {
         const scene = new THREE.Scene();
         const light = new THREE.AmbientLight(0xffffff);
         scene.add(light);
-        const camera = new THREE.PerspectiveCamera(75, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(100, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 1000);
         const geometry = new THREE.PlaneGeometry(1, 1);
+        const blocksGeometry = new THREE.BoxGeometry(1, 1, 1);
         const texture = await ExpoTHREE.loadTextureAsync({ asset: require("./img/yinyang.png") });
         const materialYinyang = new THREE.MeshLambertMaterial({
             map: texture,
@@ -55,12 +56,14 @@ export class GameScreen extends React.Component<{ navigation: any }, {}> {
         camera.position.z = 5;
         camera.lookAt(0, 0, 0);
         const yinyang = new THREE.Mesh(geometry, materialYinyang);
-        yinyang.scale.set(4, 4, 1);
+        yinyang.scale.set(2, 2, 1);
         scene.add(yinyang);
-        const xBound = 1.5;
-        const yBound = 2.5;
+        const xBound = 2.25;
+        const yBound = -1;
+        let progress = 0;
         const animate = () => {
             requestAnimationFrame(animate);
+            progress += 0.02;
             yinyang.rotation.z -= 0.01;
             yinyang.position.y += dragPos.y;
             yinyang.position.x += dragPos.x;
@@ -69,9 +72,10 @@ export class GameScreen extends React.Component<{ navigation: any }, {}> {
             } else if ((yinyang.position.x) < -xBound) {
                 yinyang.position.x = -xBound;
             }
-            if ((yinyang.position.y) < -yBound) {
-                yinyang.position.y = -yBound;
+            if ((yinyang.position.y) < progress - yBound) {
+                yinyang.position.y = progress - yBound;
             }
+            camera.position.y = progress;
             renderer.render(scene, camera);
             gl.endFrameEXP();
         };
