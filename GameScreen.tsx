@@ -6,6 +6,7 @@ import { PanResponder, PanResponderInstance, PixelRatio, View } from "react-nati
 let dragPos = new THREE.Vector2();
 let screenSize = new THREE.Vector2();
 const pixelRatio = PixelRatio.get();
+const Block_list = [[-2.15,8,2.25,0.3],[0.1,9,2.25,0.3],[-2.15,10,2.25,0.3],[0.1,10,2.25,0.3]];
 export class GameScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
         headerStyle: {
