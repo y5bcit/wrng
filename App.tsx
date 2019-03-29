@@ -1,9 +1,9 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { createAppContainer, createStackNavigator } from "react-navigation";
-import { GameScreen } from "./GameScreen";
-import { Leaderboard } from "./Leaderboard";
-import { WelcomeScreen } from "./WelcomeScreen";
+import GameScreen from "./GameScreen";
+import Leaderboard from "./Leaderboard";
+import WelcomeScreen from "./WelcomeScreen";
 
 const MainStack = createStackNavigator(
   {

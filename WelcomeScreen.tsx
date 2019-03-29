@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, Text, View } from "react-native";
 import { styles } from "./App";
-export class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
+
+export default class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
         headerStyle: {
             backgroundColor: "#F4511E",

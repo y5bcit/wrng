@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
-export class Leaderboard extends React.Component {
+
+export default class Leaderboard extends React.Component {
     public static navigationOptions = {
         headerStyle: {
             backgroundColor: "#F4511E",
