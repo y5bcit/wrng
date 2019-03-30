@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 import { createAppContainer, createStackNavigator } from "react-navigation";
 import GameScreen from "./GameScreen";
 import Leaderboard from "./Leaderboard";
@@ -42,22 +41,3 @@ export default class App extends React.Component {
     return <AppContainer />;
   }
 }
-
-export const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    backgroundColor: "#fff",
-    flex: 1,
-    justifyContent: "center",
-  },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#DDDDDD",
-    justifyContent: "center",
-    left: 200,
-    padding: 10,
-    bottom: -300,
-    height: 100,
-    width: 100,
-  },
-});

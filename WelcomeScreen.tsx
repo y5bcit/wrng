@@ -1,6 +1,5 @@
 import React from "react";
-import { Button, Text, View } from "react-native";
-import { styles } from "./App";
+import { Button, Text, View, StyleSheet } from "react-native";
 
 export default class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
@@ -25,3 +24,23 @@ export default class WelcomeScreen extends React.Component<{ navigation: any }, 
         </View>);
     }
 }
+
+export const styles = StyleSheet.create({
+    container: {
+      alignItems: "center",
+      backgroundColor: "#fff",
+      flex: 1,
+      justifyContent: "center",
+    },
+    button: {
+      alignItems: "center",
+      backgroundColor: "#DDDDDD",
+      justifyContent: "center",
+      left: 200,
+      padding: 10,
+      bottom: -300,
+      height: 100,
+      width: 100,
+    },
+  });
+  

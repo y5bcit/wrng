@@ -3,6 +3,8 @@ import ExpoTHREE, { THREE } from "expo-three";
 import React from "react";
 import { PanResponder, PanResponderInstance, View } from "react-native";
 import GameData from "./GameData";
+import Save from "./Save";
+import Helper from "./Helper";
 
 export default class GameScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
@@ -62,48 +64,54 @@ export default class GameScreen extends React.Component<{ navigation: any }, {}>
         scene.add(ballball2);
         ballball.position.z = 0.5;
         ballball2.position.z = 0.5;
-        let blocksBox = [];
         GameData.blocks.forEach(b => {
             let block = new THREE.Mesh(blocksGeometry);
-            block.scale.set(b[2], b[3], 1);
+            block.scale.set(b[2] * 2, b[3] * 2, 1);
             block.position.x = b[0];
             block.position.y = b[1];
             block.position.z = 0.5;
             scene.add(block);
-            blocksBox.push(new THREE.Box2(new THREE.Vector2(b[0] - b[2] / 2, b[1] - b[3] / 2),
-                new THREE.Vector2(b[0] + b[2] / 2, b[1] + b[3] / 2)));
         });
         const xBound = 2.25;
         const yBound = -1;
+        let current = new Save();
         const animate = () => {
-            requestAnimationFrame(animate);
-            GameData.Save.progress += 0.02;
-            yinyang.rotation.z -= 0.01;
-            yinyang.position.y += GameData.dragPos.y;
-            yinyang.position.x += GameData.dragPos.x;
-            if ((yinyang.position.x) > xBound) {
-                yinyang.position.x = xBound;
-            } else if ((yinyang.position.x) < -xBound) {
-                yinyang.position.x = -xBound;
-            }
-            if ((yinyang.position.y) < GameData.Save.progress - yBound) {
-                GameData.Save.gameEnd = true;
-            }
-            if (GameData.Save.gameEnd) {
-                GameData.Save.progress -= 0.02;
-            }
-            ballball.position.x = Math.sin(-yinyang.rotation.z) * 0.5 + yinyang.position.x;
-            ballball.position.y = Math.cos(-yinyang.rotation.z) * 0.5 + yinyang.position.y;
-            ballball2.position.x = -Math.sin(-yinyang.rotation.z) * 0.5 + yinyang.position.x;
-            ballball2.position.y = -Math.cos(-yinyang.rotation.z) * 0.5 + yinyang.position.y;
-            blocksBox.forEach(b => {
-                if (false) {
-                    GameData.Save.gameEnd = true;
+            if (!current.gameEnd) {
+                requestAnimationFrame(animate);
+                current.progress += 0.02;
+                current.rotation = yinyang.rotation.z -= 0.01;
+                current.locationX = yinyang.position.x += GameData.dragPos.x;
+                current.locationY = yinyang.position.y += GameData.dragPos.y;
+                if (yinyang.position.x > xBound) {
+                    yinyang.position.x = xBound;
+                } else if ((yinyang.position.x) < -xBound) {
+                    yinyang.position.x = -xBound;
                 }
-            });
-            camera.position.y = GameData.Save.progress;
-            renderer.render(scene, camera);
-            gl.endFrameEXP();
+                if (yinyang.position.y < current.progress - yBound) {
+                    current.gameEnd = true;
+                }
+                ballball.position.x = Math.sin(-yinyang.rotation.z) * current.centerRadius + yinyang.position.x;
+                ballball.position.y = Math.cos(-yinyang.rotation.z) * current.centerRadius + yinyang.position.y;
+                ballball2.position.x = -Math.sin(-yinyang.rotation.z) * current.centerRadius + yinyang.position.x;
+                ballball2.position.y = -Math.cos(-yinyang.rotation.z) * current.centerRadius + yinyang.position.y;
+                GameData.blocks.forEach(b => {
+                    if (Helper.intersect(b[0], b[1], b[2], b[3], ballball.position.x, ballball.position.y)) {
+                        current.gameEnd = true;
+                    } else if (Helper.intersect(b[0], b[1], b[2], b[3], ballball2.position.x, ballball2.position.y)) {
+                        current.gameEnd = true;
+                    }
+                });
+                camera.position.y = current.progress;
+                GameData.Save = current;
+                renderer.render(scene, camera);
+                gl.endFrameEXP();
+                if (current.gameEnd) {
+                    // TODO: POST the data here to server
+                    console.log(JSON.stringify(current, (k, v)=> Number(v.toFixed(4))));
+                    // TODO: Add end game animation and exit/pause button
+                    // TODO: Navigate to leaderboard
+                }
+            }
         };
         animate();
     }
