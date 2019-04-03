@@ -21,6 +21,13 @@ export default class GameScreen extends React.Component<{ navigation: any }, {}>
     constructor(props) {
         super(props);
         this.panResponder = PanResponder.create({
+            onPanResponderGrant: (evt, gestureState) => {
+                let x = gestureState.x0 * GameData.pixelRatio / GameData.screenSize.x - 0.5;
+                let y = gestureState.y0 * GameData.pixelRatio / -GameData.screenSize.y + 0.5;
+                x /= 3;
+                y /= 3;
+                GameData.dragPos = new THREE.Vector2(x, y);
+            },
             onPanResponderMove: (evt, gestureState) => {
                 let x = gestureState.x0 + gestureState.dx;
                 let y = gestureState.y0 + gestureState.dy;
@@ -87,13 +94,16 @@ export default class GameScreen extends React.Component<{ navigation: any }, {}>
                 } else if ((yinyang.position.x) < -xBound) {
                     yinyang.position.x = -xBound;
                 }
-                if (yinyang.position.y < current.progress - yBound) {
-                    current.gameEnd = true;
-                }
                 ballball.position.x = Math.sin(-yinyang.rotation.z) * current.centerRadius + yinyang.position.x;
                 ballball.position.y = Math.cos(-yinyang.rotation.z) * current.centerRadius + yinyang.position.y;
                 ballball2.position.x = -Math.sin(-yinyang.rotation.z) * current.centerRadius + yinyang.position.x;
                 ballball2.position.y = -Math.cos(-yinyang.rotation.z) * current.centerRadius + yinyang.position.y;
+                if (ballball.position.y < current.progress - yBound) {
+                    current.gameEnd = true;
+                }
+                if (ballball2.position.y < current.progress - yBound) {
+                    current.gameEnd = true;
+                }
                 GameData.blocks.forEach(b => {
                     if (Helper.intersect(b[0], b[1], b[2], b[3], ballball.position.x, ballball.position.y)) {
                         current.gameEnd = true;
@@ -107,7 +117,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, {}>
                 gl.endFrameEXP();
                 if (current.gameEnd) {
                     // TODO: POST the data here to server
-                    console.log(JSON.stringify(current, (k, v)=> Number(v.toFixed(4))));
+                    // console.log(JSON.stringify(current, (k, v)=> Number(v.toFixed(4))));
                     // TODO: Add end game animation and exit/pause button
                     // TODO: Navigate to leaderboard
                 }

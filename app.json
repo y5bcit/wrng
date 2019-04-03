@@ -24,6 +24,8 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "A simple game using navigation and GLView.",
+    "githubUrl": "https://github.com/y5bcit/wrng"
   }
 }
