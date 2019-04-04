@@ -91,9 +91,15 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         scene.add(ballball2);
         ballball.position.z = 0.5;
         ballball2.position.z = 0.5;
+        let block_texture = await ExpoTHREE.loadTextureAsync({ asset: require("./img/chinese_painting.png") });
+        let materialBlock = new THREE.MeshLambertMaterial({
+            map: block_texture,
+            side: THREE.FrontSide,
+            transparent: true,
+        });
         GameData.blocks.forEach(b => {
-            let block = new THREE.Mesh(blocksGeometry);
-            block.scale.set(b[2] * 2, b[3] * 2, 1);
+            let block = new THREE.Mesh(blocksGeometry,materialBlock);
+            block.scale.set(b[2] * 2, b[3] * 2, 2);
             block.position.x = b[0];
             block.position.y = b[1];
             block.position.z = 0.5;
