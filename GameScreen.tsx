@@ -1,4 +1,4 @@
-import { GLView } from "expo";
+import { Audio, GLView } from "expo";
 import ExpoTHREE, { THREE } from "expo-three";
 import React from "react";
 import { PanResponder, PanResponderInstance, View, TextInput, Text, Button, StyleSheet } from "react-native";
@@ -6,7 +6,7 @@ import GameData from "./GameData";
 import Save from "./Save";
 import Helper from "./Helper";
 
-export default class GameScreen extends React.Component<{ navigation: any }, { playerName: string }> {
+export default class GameScreen extends React.Component<{ navigation: any }, { bg_music: boolean, playerName: string }> {
     public static navigationOptions = {
         headerStyle: {
             backgroundColor: "#F4511E",
@@ -35,8 +35,9 @@ export default class GameScreen extends React.Component<{ navigation: any }, { p
     constructor(props) {
         super(props);
         this.state = {
+            bg_music: true,
             playerName: ""
-        };
+        }
         this.panResponder = PanResponder.create({
             onPanResponderGrant: (evt, gestureState) => {
                 let x = gestureState.x0 * GameData.pixelRatio / GameData.screenSize.x - 0.5;
@@ -101,6 +102,18 @@ export default class GameScreen extends React.Component<{ navigation: any }, { p
         const xBound = 2.25;
         const yBound = -1;
         let current = new Save();
+        const bgsound = new Audio.Sound();
+        const gameove = new Audio.Sound();
+        await bgsound.loadAsync(require("./assets/sounds/bg_music.mp3"));
+        await gameove.loadAsync(require("./assets/sounds/dying_sound.wav"));
+        const game_over_sound = async () => {
+            try {
+                await bgsound.pauseAsync();
+                await gameove.replayAsync();
+            } catch (error) {
+                console.log('play music error: ', error)
+            }
+        }
         const animate = () => {
             if (!current.gameEnd) {
                 requestAnimationFrame(animate);
@@ -142,10 +155,12 @@ export default class GameScreen extends React.Component<{ navigation: any }, { p
                     // TODO: Add end game animation and exit/pause button
                     // TODO: Navigate to leaderboard
                     //JSON.stringify(GameData.Save, (k, v) => { if (typeof v === "number") return Number(v.toFixed(4)); else return v; })
+                    game_over_sound();
                 }
             }
         };
         animate();
+        await bgsound.replayAsync();
     }
 
     public render() {
