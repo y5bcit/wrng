@@ -1,12 +1,12 @@
 import { GLView } from "expo";
 import ExpoTHREE, { THREE } from "expo-three";
 import React from "react";
-import { PanResponder, PanResponderInstance, View } from "react-native";
+import { PanResponder, PanResponderInstance, View, TextInput, Text, Button, StyleSheet } from "react-native";
 import GameData from "./GameData";
 import Save from "./Save";
 import Helper from "./Helper";
 
-export default class GameScreen extends React.Component<{ navigation: any }, {}> {
+export default class GameScreen extends React.Component<{ navigation: any }, { playerName: string }> {
     public static navigationOptions = {
         headerStyle: {
             backgroundColor: "#F4511E",
@@ -17,9 +17,26 @@ export default class GameScreen extends React.Component<{ navigation: any }, {}>
         },
         title: "GameScreen",
     };
+    static style = StyleSheet.create({
+        display: {
+            alignItems: "stretch",
+            alignSelf: "center",
+            backgroundColor: "rgba(190,206,232,0.8)",
+            bottom: "50%",
+            height: "25%",
+            justifyContent: "center",
+            position: "absolute",
+            width: "50%",
+        },
+        hidden: {}
+    });
     public panResponder: PanResponderInstance;
+
     constructor(props) {
         super(props);
+        this.state = {
+            playerName: ""
+        };
         this.panResponder = PanResponder.create({
             onPanResponderGrant: (evt, gestureState) => {
                 let x = gestureState.x0 * GameData.pixelRatio / GameData.screenSize.x - 0.5;
@@ -43,7 +60,9 @@ export default class GameScreen extends React.Component<{ navigation: any }, {}>
             onStartShouldSetPanResponder: (evt, gestureState) => true,
         });
         THREE.suppressExpoWarnings(true);
+        this.occ = this.occ.bind(this);
     }
+
     public async occ(gl: WebGLRenderingContext) {
         const renderer = new ExpoTHREE.Renderer({ gl, width: gl.drawingBufferWidth, height: gl.drawingBufferHeight });
         GameData.screenSize = new THREE.Vector2(gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -114,20 +133,52 @@ export default class GameScreen extends React.Component<{ navigation: any }, {}>
                 camera.position.y = current.progress;
                 GameData.Save = current;
                 renderer.render(scene, camera);
+                // @ts-ignore
                 gl.endFrameEXP();
                 if (current.gameEnd) {
+                    this.setState({});
                     // TODO: POST the data here to server
                     // console.log(JSON.stringify(current, (k, v)=> Number(v.toFixed(4))));
                     // TODO: Add end game animation and exit/pause button
                     // TODO: Navigate to leaderboard
+                    //JSON.stringify(GameData.Save, (k, v) => { if (typeof v === "number") return Number(v.toFixed(4)); else return v; })
                 }
             }
         };
         animate();
     }
+
     public render() {
         return (<View {...this.panResponder.panHandlers}>
             <GLView style={{ height: "100%", width: "100%" }} onContextCreate={this.occ} />
+            <View style={GameData.Save.gameEnd ? GameScreen.style.display : GameScreen.style.hidden}>
+                <TextInput
+                    style={{ height: 35, width: 200, padding: 10, margin: 10, borderWidth: 1, borderRadius: 10, borderColor: "#48BBEC" }}
+                    placeholder="Enter your name"
+                    onChangeText={(text) => this.setState({ playerName: text })}
+                    clearTextOnFocus={true}
+                />
+                <Text>Your score is {((GameData.Save.progress + 5) * 100).toFixed()}</Text>
+                <Button
+                    onPress={() => {
+                        fetch("https://wrng-server.herokuapp.com/top", {
+                            method: "POST",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                n: this.state.playerName,
+                                s: Number(((GameData.Save.progress + 5) * 100).toFixed()),
+                            }),
+                        });
+                        this.props.navigation.navigate("Main");
+                    }}
+                    title="Upload"
+                    color="white"
+                    accessibilityLabel="This is a button"
+                />
+            </View>
         </View>);
     }
 }

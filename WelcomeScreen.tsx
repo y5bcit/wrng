@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Text, View, StyleSheet } from "react-native";
+import GameData from "./GameData";
 
 export default class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
@@ -16,6 +17,7 @@ export default class WelcomeScreen extends React.Component<{ navigation: any }, 
         return (<View style={styles.container}>
             <Text>This is Home Screen</Text>
             <Button title="Go to Game" onPress={() => {
+                GameData.Save.gameEnd = false;
                 this.props.navigation.navigate("Game");
             }} />
             <Button title="Go to Leaderboard" onPress={() => {

@@ -1,7 +1,7 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, FlatList } from "react-native";
 
-export default class Leaderboard extends React.Component {
+export default class Leaderboard extends React.Component<{}, { scores: { n: string, s: number }[] }> {
     public static navigationOptions = {
         headerStyle: {
             backgroundColor: "#F4511E",
@@ -12,9 +12,31 @@ export default class Leaderboard extends React.Component {
         },
         title: "Leaderboard",
     };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            scores: []
+        };
+        fetch('https://wrng-server.herokuapp.com/top')
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({
+                    scores: responseJson
+                })
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
     public render() {
-        return (<View>
-            <Text>This is Leaderboard Screen</Text>
-        </View>);
+        return (
+            <FlatList keyExtractor={(i, k) => k.toString()} extraData={this.state} data={this.state.scores}
+                renderItem={({ item }) => <View>
+                    <Text>Name: {item.n}, Score: {item.s}</Text>
+                </View>}
+            />
+        );
     }
-}
+};
