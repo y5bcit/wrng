@@ -4,16 +4,16 @@ import GameData from "./GameData";
 
 export default class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
     
-    public static navigationOptions = {
-        headerStyle: {
-            backgroundColor: "#F4511E",
-        },
-        headerTintColor: "#FFFFFF",
-        headerTitleStyle: {
-            fontWeight: "bold",
-        },
-        title: "WelcomeScreen",
-    };
+    // public static navigationOptions = {
+    //     headerStyle: {
+    //         backgroundColor: "#F4511E",
+    //     },
+    //     headerTintColor: "#FFFFFF",
+    //     headerTitleStyle: {
+    //         fontWeight: "bold",
+    //     },
+    //     title: "WelcomeScreen",
+    // };
 
 
 
@@ -36,7 +36,9 @@ export default class WelcomeScreen extends React.Component<{ navigation: any }, 
                 this.props.navigation.navigate("Game");
                 this.click_button_sound();
             }} />
-            <Button title="Go to Leaderboard" onPress={() => {
+            <Button title="Go to Leaderboard" 
+                style={styles.button}
+                onPress={() => {
                 this.props.navigation.navigate("Score");
                 this.click_button_sound();
             }} />
@@ -57,6 +59,7 @@ export const styles = StyleSheet.create({
       justifyContent: "center",
       left: 200,
       padding: 10,
+      marginTop: 5,
       bottom: -300,
       height: 100,
       width: 100,
