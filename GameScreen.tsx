@@ -142,6 +142,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         }
         const animate = () => {
             if (!current.gameEnd) {
+                leftWall.rotation.z += 0.01;
                 requestAnimationFrame(animate);
                 current.progress += 0.02;
                 current.rotation = yinyang.rotation.z -= 0.01;
