@@ -80,9 +80,30 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
             side: THREE.DoubleSide,
             transparent: true,
         });
+        materialYinyang.depthWrite = false;
         camera.position.z = 5;
         camera.lookAt(0, 5, 0);
+        const wallTexture = await ExpoTHREE.loadTextureAsync({ asset: require("./img/wall.png") });
+        wallTexture.wrapS = THREE.MirrorRepeatWrapping;
+        wallTexture.wrapT = THREE.MirrorRepeatWrapping;
+        wallTexture.repeat.set(1, 4);
+        const materialWall = new THREE.MeshLambertMaterial({
+            map: wallTexture,
+            side: THREE.DoubleSide,
+        });
+        const rightWall = new THREE.Mesh(blocksGeometry, materialWall);
+        const leftWall = new THREE.Mesh(blocksGeometry, materialWall);
         const yinyang = new THREE.Mesh(geometry, materialYinyang);
+        rightWall.scale.set(0.01, 200, 16)
+        leftWall.scale.set(0.01, 200, 16)
+        scene.add(rightWall);
+        scene.add(leftWall);
+        rightWall.position.x = 4.25;
+        leftWall.position.x = -4.25;
+        rightWall.position.y = 100;
+        leftWall.position.y = 100;
+        rightWall.position.z = rightWall.scale.z / 2 - 1.5;
+        leftWall.position.z = leftWall.scale.z / 2 - 1.5;
         yinyang.scale.set(2, 2, 1);
         scene.add(yinyang);
         const ballball = new THREE.Mesh(sphere);
@@ -95,10 +116,9 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         let materialBlock = new THREE.MeshLambertMaterial({
             map: block_texture,
             side: THREE.FrontSide,
-            transparent: true,
         });
         GameData.blocks.forEach(b => {
-            let block = new THREE.Mesh(blocksGeometry,materialBlock);
+            let block = new THREE.Mesh(blocksGeometry, materialBlock);
             block.scale.set(b[2] * 2, b[3] * 2, 2);
             block.position.x = b[0];
             block.position.y = b[1];
@@ -122,6 +142,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         }
         const animate = () => {
             if (!current.gameEnd) {
+                leftWall.rotation.z += 0.01;
                 requestAnimationFrame(animate);
                 current.progress += 0.02;
                 current.rotation = yinyang.rotation.z -= 0.01;
@@ -136,12 +157,12 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
                 ballball.position.y = Math.cos(-yinyang.rotation.z) * current.centerRadius + yinyang.position.y;
                 ballball2.position.x = -Math.sin(-yinyang.rotation.z) * current.centerRadius + yinyang.position.x;
                 ballball2.position.y = -Math.cos(-yinyang.rotation.z) * current.centerRadius + yinyang.position.y;
-                if (ballball.position.y < current.progress - yBound) {
-                    current.gameEnd = true;
+                if (yinyang.position.y < current.progress - yBound) {
+                    yinyang.position.y = current.progress - yBound;
                 }
-                if (ballball2.position.y < current.progress - yBound) {
-                    current.gameEnd = true;
-                }
+                // if (ballball2.position.y < current.progress - yBound) {
+                //     yinyang.position.y = current.progress -yBound;
+                // }
                 GameData.blocks.forEach(b => {
                     if (Helper.intersect(b[0], b[1], b[2], b[3], ballball.position.x, ballball.position.y)) {
                         current.gameEnd = true;
