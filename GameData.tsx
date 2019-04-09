@@ -21,4 +21,5 @@ export default class GameData {
     [2, 58, 4, 0.15],
     [2, 60, 4, 0.15],
     [2, 62, 4, 0.15]];
+    static musicLoaded=false;
 }

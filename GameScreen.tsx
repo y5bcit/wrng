@@ -65,7 +65,8 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         THREE.suppressExpoWarnings(true);
         this.occ = this.occ.bind(this);
     }
-
+    static bgsound = new Audio.Sound();
+    static gameove = new Audio.Sound();
     public async occ(gl: WebGLRenderingContext) {
         const renderer = new ExpoTHREE.Renderer({ gl, width: gl.drawingBufferWidth, height: gl.drawingBufferHeight });
         GameData.screenSize = new THREE.Vector2(gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -96,8 +97,8 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         const rightWall = new THREE.Mesh(blocksGeometry, materialWall);
         const leftWall = new THREE.Mesh(blocksGeometry, materialWall);
         const yinyang = new THREE.Mesh(geometry, materialYinyang);
-        rightWall.scale.set(0.01, 200, 16)
-        leftWall.scale.set(0.01, 200, 16)
+        rightWall.scale.set(0.01, 200, 8)
+        leftWall.scale.set(0.01, 200, 8)
         scene.add(rightWall);
         scene.add(leftWall);
         rightWall.position.x = 4.25;
@@ -106,6 +107,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         leftWall.position.y = 100;
         rightWall.position.z = rightWall.scale.z / 2 - 1.5;
         leftWall.position.z = leftWall.scale.z / 2 - 1.5;
+        //leftWall.rotation.z = 3.14;
         yinyang.scale.set(2, 2, 1);
         scene.add(yinyang);
         const ballball = new THREE.Mesh(sphere);
@@ -121,7 +123,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         });
         GameData.blocks.forEach(b => {
             let block = new THREE.Mesh(blocksGeometry, materialBlock);
-            block.scale.set(b[2] * 2, b[3] * 2, 2);
+            block.scale.set(b[2] * 2, b[3] * 2, 0.5);
             block.position.x = b[0];
             block.position.y = b[1];
             block.position.z = 0.5;
@@ -130,21 +132,19 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         const xBound = 2.25;
         const yBound = -1;
         let current = new Save();
-        const bgsound = new Audio.Sound();
-        const gameove = new Audio.Sound();
-        await bgsound.loadAsync(require("./assets/sounds/bg_music.mp3"));
-        await gameove.loadAsync(require("./assets/sounds/dying_sound.wav"));
-        const game_over_sound = async () => {
+         const game_over_sound = async () => {
             try {
-                await bgsound.pauseAsync();
-                await gameove.replayAsync();
+                await GameScreen.bgsound.pauseAsync();
+                await GameScreen.gameove.replayAsync();
             } catch (error) {
                 console.log('play music error: ', error)
             }
         }
+
+        
         const animate = () => {
             if (!current.gameEnd) {
-                leftWall.rotation.z += 0.01;
+                //leftWall.rotation.z += 0.01;
                 requestAnimationFrame(animate);
                 current.progress += 0.02;
                 current.rotation = yinyang.rotation.z -= 0.01;
@@ -189,7 +189,16 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
             }
         };
         animate();
-        await bgsound.replayAsync();
+        GameScreen.bgsound.replayAsync();
+    }
+    async componentWillUnmount(){
+        GameData.Save.gameEnd=true;
+        try {
+            await GameScreen.bgsound.pauseAsync();
+            
+        } catch (error) {
+            console.log('play music error: ', error)
+        }console.log("stop music unmount")
     }
 
     public render() {
