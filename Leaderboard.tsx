@@ -4,7 +4,7 @@ import { Text, View, FlatList } from "react-native";
 export default class Leaderboard extends React.Component<{}, { scores: { n: string, s: number }[] }> {
     public static navigationOptions = {
         headerStyle: {
-            backgroundColor: "#F4511E",
+            backgroundColor: "black",
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
@@ -33,8 +33,9 @@ export default class Leaderboard extends React.Component<{}, { scores: { n: stri
     public render() {
         return (
             <FlatList keyExtractor={(i, k) => k.toString()} extraData={this.state} data={this.state.scores}
-                renderItem={({ item }) => <View>
-                    <Text>Name: {item.n}, Score: {item.s}</Text>
+                renderItem={({ item }) => <View style={{ alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 10, padding: 3, margin: 10, marginHorizontal: 60 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{item.n}</Text>
+                    <Text style={{ fontSize: 16 }}>{item.s}</Text>
                 </View>}
             />
         );

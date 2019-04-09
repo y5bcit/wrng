@@ -19,14 +19,16 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
     };
     static style = StyleSheet.create({
         display: {
-            alignItems: "stretch",
+            borderRadius: 10,
+            borderWidth: 1,
+            alignItems: "center",
             alignSelf: "center",
-            backgroundColor: "rgba(190,206,232,0.8)",
+            backgroundColor: "white",
             bottom: "50%",
-            height: "25%",
+            height: "35%",
             justifyContent: "center",
             position: "absolute",
-            width: "50%",
+            width: "80%",
         },
         hidden: {}
     });
@@ -194,13 +196,14 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         return (<View {...this.panResponder.panHandlers}>
             <GLView style={{ height: "100%", width: "100%" }} onContextCreate={this.occ} />
             <View style={GameData.Save.gameEnd ? GameScreen.style.display : GameScreen.style.hidden}>
+                <Text style={{ fontSize: 40 }}>You lose</Text>
                 <TextInput
-                    style={{ height: 35, width: 200, padding: 10, margin: 10, borderWidth: 1, borderRadius: 10, borderColor: "#48BBEC" }}
+                    style={{ height: 35, width: 200, padding: 10, margin: 10, borderWidth: 1, borderRadius: 10, borderColor: "#48BBEC", color: 'black' }}
                     placeholder="Enter your name"
                     onChangeText={(text) => this.setState({ playerName: text })}
                     clearTextOnFocus={true}
                 />
-                <Text>Your score is {((GameData.Save.progress + 5) * 100).toFixed()}</Text>
+                <Text style={{ fontSize: 20 }}>Your score is {((GameData.Save.progress + 5) * 100).toFixed()}</Text>
                 <Button
                     onPress={() => {
                         fetch("https://wrng-server.herokuapp.com/top", {
@@ -217,7 +220,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
                         this.props.navigation.navigate("Main");
                     }}
                     title="Upload"
-                    color="white"
+                    color="black"
                     accessibilityLabel="This is a button"
                 />
             </View>
