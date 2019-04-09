@@ -1,17 +1,17 @@
 import React from "react";
-import { Button, Text, View, StyleSheet } from "react-native";
+import { Button, Text, View, StyleSheet, Image, TouchableHighlight } from "react-native";
 import GameData from "./GameData";
 
 export default class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
         headerStyle: {
-            backgroundColor: "#F4511E",
+            backgroundColor: "black",
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
             fontWeight: "bold",
         },
-        title: "WelcomeScreen",
+        title: "Welcome",
     };
 
     click_button_sound = async () => {
@@ -26,16 +26,24 @@ export default class WelcomeScreen extends React.Component<{ navigation: any }, 
     public render() {
 
         return (<View style={styles.container}>
-            <Text>This is Home Screen</Text>
-            <Button title="Go to Game" onPress={() => {
+            <Image source={require('./taichi.png')}  style={styles.backgroundImage}></Image>
+            <TouchableHighlight style={{position: 'absolute', top: '20%'}}
+                onPress={() => {
                 GameData.Save.gameEnd = false;
                 this.props.navigation.navigate("Game");
                 this.click_button_sound();
-            }} />
-            <Button title="Go to Leaderboard" onPress={() => {
+                }} >
+                <Text style={{fontSize: 40}}>Play</Text>
+            </TouchableHighlight>
+            
+            <TouchableHighlight style={{position: 'absolute', bottom: '20%'}}
+            onPress={() => {
                 this.props.navigation.navigate("Score");
                 this.click_button_sound();
-            }} />
+            }}>
+            <Text style={{fontSize: 40, color: 'white'}}>Leaderboard</Text>
+            </TouchableHighlight>
+            
         </View>);
     }
 }
@@ -57,4 +65,8 @@ export const styles = StyleSheet.create({
         height: 100,
         width: 100,
     },
+    backgroundImage: {
+        width: '100%',
+        height: '100%'
+    }
 });
