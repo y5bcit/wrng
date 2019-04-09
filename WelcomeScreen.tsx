@@ -26,7 +26,7 @@ export default class WelcomeScreen extends React.Component<{ navigation: any }, 
     public render() {
 
         return (<View style={styles.container}>
-            <Image source={require('./taichi.png')} style={styles.backgroundImage}></Image>
+            <Image source={require('./img/taichi.png')} style={styles.backgroundImage}></Image>
             <TouchableHighlight style={{ position: 'absolute', top: '20%' }}
                 onPress={() => {
                     GameData.Save.gameEnd = false;
