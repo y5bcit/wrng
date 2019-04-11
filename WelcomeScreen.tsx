@@ -5,26 +5,23 @@ import GameData from "./GameData";
 export default class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
         headerStyle: {
-            backgroundColor: "black",
+            backgroundColor: "black"
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
-            fontWeight: "bold",
+            fontWeight: "bold"
         },
-        title: "Welcome",
+        title: "Welcome"
     };
 
     click_button_sound = async () => {
         try {
-            await GameData.soundObject.unloadAsync();
-            await GameData.soundObject.loadAsync(require('./assets/sounds/click_sound.wav'));
             await GameData.soundObject.replayAsync();
         } catch (error) {
-            console.log('click_sound error: ', error)
+            console.log("click_sound error: ", error);
         }
     }
     public render() {
-
         return (<View style={styles.container}>
             <Image source={require('./img/taichi.png')} style={styles.backgroundImage}></Image>
             <TouchableHighlight style={{ position: 'absolute', top: '20%' }}
