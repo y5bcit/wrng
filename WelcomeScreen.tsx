@@ -4,16 +4,10 @@ import GameData from "./GameData";
 
 export default class WelcomeScreen extends React.Component<{ navigation: any }, {}> {
     public static navigationOptions = {
-        headerStyle: {
-            backgroundColor: "black"
-        },
-        headerTintColor: "#FFFFFF",
-        headerTitleStyle: {
-            fontWeight: "bold"
-        },
+        header: null,
         title: "Welcome"
     };
-
+    
     click_button_sound = async () => {
         try {
             await GameData.soundObject.replayAsync();
@@ -21,10 +15,11 @@ export default class WelcomeScreen extends React.Component<{ navigation: any }, 
             console.log("click_sound error: ", error);
         }
     }
+
     public render() {
         return (<View style={styles.container}>
-            <Image source={require('./img/taichi.png')} style={styles.backgroundImage}></Image>
-            <TouchableHighlight style={{ position: 'absolute', top: '20%' }}
+            <Image source={require("./img/taichi.png")} style={styles.backgroundImage}></Image>
+            <TouchableHighlight style={{ position: "absolute", top: "20%" }}
                 onPress={() => {
                     GameData.Save.gameEnd = false;
                     this.props.navigation.navigate("Game");
@@ -32,13 +27,12 @@ export default class WelcomeScreen extends React.Component<{ navigation: any }, 
                 }} >
                 <Text style={{ fontSize: 40 }}>Play</Text>
             </TouchableHighlight>
-
-            <TouchableHighlight style={{ position: 'absolute', bottom: '20%' }}
+            <TouchableHighlight style={{ position: "absolute", bottom: "20%" }}
                 onPress={() => {
                     this.props.navigation.navigate("Score");
                     this.click_button_sound();
                 }}>
-                <Text style={{ fontSize: 40, color: 'white' }}>Leaderboard</Text>
+                <Text style={{ fontSize: 40, color: "white" }}>Leaderboard</Text>
             </TouchableHighlight>
         </View>);
     }
@@ -62,7 +56,7 @@ export const styles = StyleSheet.create({
         width: 100,
     },
     backgroundImage: {
-        width: '100%',
-        height: '100%'
+        width: "100%",
+        height: "100%"
     }
 });

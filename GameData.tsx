@@ -1,7 +1,7 @@
 import { THREE } from "expo-three";
 import { PixelRatio } from "react-native";
 import Save from "./Save";
-import { Audio } from 'expo';
+import { Audio } from "expo";
 
 export default class GameData {
     static Save = new Save();

@@ -39,18 +39,21 @@ const AppContainer = createAppContainer(RootStack);
 
 export default class App extends React.Component {
   async componentDidMount() {
-    if (!GameData.musicLoaded) {
-      await GameScreen.bgsound.loadAsync(
-        require("./assets/sounds/bg_music.mp3")
-      );
-      await GameScreen.gameove.loadAsync(
-        require("./assets/sounds/dying_sound.wav")
-      );
-      await GameData.soundObject.loadAsync(
-        require("./assets/sounds/click_sound.wav")
-      );
-      GameData.musicLoaded = true;
+    try {
+      if (!GameData.musicLoaded) {
+        await GameScreen.bgsound.loadAsync(
+          require("./assets/sounds/bg_music.mp3")
+        );
+        await GameScreen.gameove.loadAsync(
+          require("./assets/sounds/dying_sound.wav")
+        );
+        await GameData.soundObject.loadAsync(
+          require("./assets/sounds/click_sound.wav")
+        );
+        GameData.musicLoaded = true;
+      }
     }
+    catch (e) { }
   }
   public render() {
     return <AppContainer />;

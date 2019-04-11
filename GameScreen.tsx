@@ -43,7 +43,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
         this.panResponder = PanResponder.create({
             onPanResponderGrant: (evt, gestureState) => {
                 let x = gestureState.x0 * GameData.pixelRatio / GameData.screenSize.x - 0.5;
-                let y = gestureState.y0 * GameData.pixelRatio / -GameData.screenSize.y + 0.5;
+                let y = gestureState.y0 * GameData.pixelRatio / -GameData.screenSize.y + 0.625;
                 x /= 3;
                 y /= 3;
                 GameData.dragPos = new THREE.Vector2(x, y);
@@ -52,7 +52,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
                 let x = gestureState.x0 + gestureState.dx;
                 let y = gestureState.y0 + gestureState.dy;
                 x = x * GameData.pixelRatio / GameData.screenSize.x - 0.5;
-                y = y * GameData.pixelRatio / -GameData.screenSize.y + 0.5;
+                y = y * GameData.pixelRatio / -GameData.screenSize.y + 0.625;
                 x /= 3;
                 y /= 3;
                 GameData.dragPos = new THREE.Vector2(x, y);
@@ -122,14 +122,16 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
             map: block_texture,
             side: THREE.FrontSide,
         });
-        GameData.blocks.forEach(b => {
-            let block = new THREE.Mesh(blocksGeometry, materialBlock);
-            block.scale.set(b[2] * 2, b[3] * 2, 0.5);
-            block.position.x = b[0];
-            block.position.y = b[1];
-            block.position.z = 0.5;
-            scene.add(block);
-        });
+        for (let index = 0; index < 4; index++) {
+            GameData.blocks.forEach(b => {
+                let block = new THREE.Mesh(blocksGeometry, materialBlock);
+                block.scale.set(b[2] * 2, b[3] * 2, 0.5);
+                block.position.x = b[0];
+                block.position.y = b[1] + index * 70;
+                block.position.z = 0.5;
+                scene.add(block);
+            });
+        }
         const xBound = 2.25;
         const yBound = -1;
         let current = new Save();
@@ -138,14 +140,14 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
                 await GameScreen.bgsound.pauseAsync();
                 await GameScreen.gameove.replayAsync();
             } catch (error) {
-                console.log('play music error: ', error)
+                console.log("play music error: ", error)
             }
         }
         const animate = () => {
             if (!current.gameEnd) {
                 //leftWall.rotation.z += 0.01;
                 requestAnimationFrame(animate);
-                current.progress += 0.02;
+                current.progress += 0.03 + 0.0004 * current.progress;
                 current.rotation = yinyang.rotation.z -= 0.01;
                 current.locationX = yinyang.position.x += GameData.dragPos.x;
                 current.locationY = yinyang.position.y += GameData.dragPos.y;
@@ -187,8 +189,10 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
                 }
             }
         };
-        animate();
-        GameScreen.bgsound.replayAsync();
+        animate(); 
+        try {
+            GameScreen.bgsound.replayAsync().catch(() => { });;
+        } catch { }
     }
     async componentWillUnmount() {
         GameData.Save.gameEnd = true;
@@ -203,7 +207,7 @@ export default class GameScreen extends React.Component<{ navigation: any }, { b
             <View style={GameData.Save.gameEnd ? GameScreen.style.display : GameScreen.style.hidden}>
                 <Text style={{ fontSize: 40 }}>You lose</Text>
                 <TextInput
-                    style={{ height: 35, width: 200, padding: 10, margin: 10, borderWidth: 1, borderRadius: 10, borderColor: "#48BBEC", color: 'black' }}
+                    style={{ height: 35, width: 200, padding: 10, margin: 10, borderWidth: 1, borderRadius: 10, borderColor: "#48BBEC", color: "black" }}
                     placeholder="Enter your name"
                     onChangeText={(text) => this.setState({ playerName: text })}
                     clearTextOnFocus={true}
